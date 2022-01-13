@@ -20,14 +20,21 @@ contract Lottery {
     }
 
     function getEntranceFee() public view returns (uint256) {
+        // Segun chainlink esto solo retorna 8 decimales.
+        //  Es el precio de 1 ETH en USD * 10 ^ 8
+        //  Se debe aumentar solo 10 ^ 10
         (, int256 price, , , ) = ethUsdPriceFeed.latestRoundData();
-        uint256 adjustedPrice = uint256(price) * 10**18; // 18 decimals
-        // $50, $2,000 / ETH
-        // 50/2,000
-        // 50 * 100000 / 2000
-        uint256 costToEnter = (usdEntryFee * 10**18) / adjustedPrice;
+        // Precio  en USD de 1 ETH
+        uint256 adjustedPrice = uint256(price) * 10**10;
+        // Get entrance Fee in Wei
+        // ((usdEntryFee * 10**18) / adjustedPrice)
+        uint256 costToEnter = ((usdEntryFee * 10**18) / adjustedPrice);
         return costToEnter;
     }
+
+    function convertFromETHtoWei() private pure returns (uint256) {}
+
+    // Importante: Need a view function to convert from ETH to Wei
 
     function startLottery() external {}
 
